@@ -4,6 +4,8 @@ namespace FileComposer
 {
     internal class Options
     {
+        private const string DEFAULT_SEPARATOR = ":";
+
         [Option('p', "path", Required = true, HelpText = "Path of the file to compose")]
         public string Path { get; set; }
 
@@ -19,7 +21,7 @@ namespace FileComposer
         [Option('e', "failIf0Replace", Required = false, HelpText = "Falla si no se encontro ninguna lcave para reemplazar")]
         public bool FailIf0Replace { get; set; }
 
-        [Option('S', "separator", Required = true, HelpText = "Separator used between the Key and Value in the Key/Value pair")]
+        [Option('S', "separator", Required = true, Default = DEFAULT_SEPARATOR, HelpText = "Separator used between the Key and Value in the Key/Value pair")]
         public string Separator { get; set; }
 
         [Option('t', "silent", Required = true, HelpText = "If it's set, the result of the replace will not be returned by standar output")]

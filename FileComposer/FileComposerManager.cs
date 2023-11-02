@@ -3,7 +3,6 @@
 //FileComposer
 
 using CommandLine;
-using System.Net.Http.Headers;
 using System.Text;
 
 namespace FileComposer
@@ -12,7 +11,6 @@ namespace FileComposer
     {
 
         private readonly IUtils _utils;
-        private const string DEFAULT_SEPARATOR = ":";
 
         public FileComposerManager(IUtils utils)
         {
@@ -21,8 +19,6 @@ namespace FileComposer
 
         public void Execute(string[] args)
         {
-            string separator = ":";
-
             Options options = Parser.Default.ParseArguments<Options>(args)
                 .WithParsed<Options>(o => { }).Value;
 
@@ -31,9 +27,6 @@ namespace FileComposer
 
             if (!File.Exists(options.Path))
                 throw new Exception($"The file especified in 'Path' parameter can not be found: {options.Path}");
-
-            if (string.IsNullOrWhiteSpace(options.Separator)) separator = DEFAULT_SEPARATOR;
-                
 
             try
             { 
@@ -44,21 +37,24 @@ namespace FileComposer
                 {
                     if (string.IsNullOrWhiteSpace(inputLine)) continue;
 
-
                     string key, value;
-                    (key, value) = GetKeyValuePairs(inputLine, separator);
+                    (key, value) = GetKeyValuePairs(inputLine, options.Separator);
 
-                    if (string.IsNullOrWhiteSpace(key) && !options.SkipInvalidLines)
+                    if (string.IsNullOrWhiteSpace(key))
                     {
-                        throw new Exception($"The line '{inputLine}' does not have the right format. The key is null");
+                        if (!options.SkipInvalidLines)
+                            throw new Exception($"The line '{inputLine}' does not have the right format. The key is null");
                     }
 
                     bool preffixPresent = _utils.HasThePreffix(key, options.FilterPreffix);
                     bool suffixPresent = _utils.HasTheSuffix(key, options.FilterSuffix);
 
-                    if (preffixPresent && suffixPresent) continue;
+                    if (!preffixPresent || !suffixPresent) continue;
 
-                    _utils.ReplaceVariable(ref fileContent, key, value, options.IgnoreCase);
+                    bool keyNotFound = _utils.ReplaceVariable(ref fileContent, key, value, options.IgnoreCase);
+
+                    if (options.FailIf0Replace && keyNotFound)
+                        throw new Exception($"The key '{key}' was not foud in the destiny file");
                 }
 
                 if (options.WriteFile)

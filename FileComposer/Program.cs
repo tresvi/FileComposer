@@ -1,8 +1,4 @@
-﻿//Agregar --ignoreWrongLines  --Filter   --w (sobreescribir file, si no, devolver el texto por stdout)
-// --separator(por default ':')    --failIf0Replace   --silent (no devuelve nada por consola)
-//FileComposer
-
-
+﻿
 namespace FileComposer
 {
     internal class Program
