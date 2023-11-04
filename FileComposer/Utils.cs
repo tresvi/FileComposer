@@ -54,7 +54,7 @@ namespace FileComposer
         {
             try
             {
-                using (var writer = new StreamWriter(filePath, false, encoding))
+                using (var writer = new StreamWriter(filePath + "(1)", false, encoding))
                 {
                     writer.Write(content);
                 }
@@ -67,12 +67,14 @@ namespace FileComposer
 
         public bool HasThePreffix(string word, string preffix)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(preffix)) return true;
+            return word.StartsWith(preffix);
         }
 
         public bool HasTheSuffix(string word, string suffix)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(suffix)) return true;
+            return word.EndsWith(suffix);
         }
 
     }

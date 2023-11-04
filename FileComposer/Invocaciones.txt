@@ -1,0 +1,43 @@
+      - name: ENV Local
+        env:
+          VARS_JSON_LOCAL: ${{ toJSON(vars) }}
+          OTRA_VAR_LOCAL: "HOLAAAAAAAAAAAA"
+        run: |
+          echo "${{ env.VARS_JSON_LOCAL}}" | C:\actions-runner\ConfigFiller2\ConfigFiller2.exe --path 
+
+        #Requiere declarar    VARS_JSON: ${{ toJSON(vars) }} como variable de ambinetne       
+      - name: ENV Global 
+        run: |
+          echo "**********************"
+          echo "${{ env.VARS_JSON }}" 
+          echo "**********************"
+
+
+      - name: Prueba programa 
+        run: |
+          echo "**********************"
+          echo "${{ env.VARS_JSON }}" | C:\actions-runner\ConfigFiller2\ConfigFiller2.exe --path 
+          echo "**********************"
+
+          
+      - name: Dump Con file
+        env:
+          VARS_JSON_LOCAL: ${{ toJSON(vars) }}
+        run: |
+          echo "${{ env.VARS_JSON }}" >> dump.txt
+          echo "INICIO DUMP"
+          type dump.txt
+          echo "Fin DUMP"
+          echo "**************"
+          type dump.txt | C:\actions-runner\ConfigFiller2\ConfigFiller2.exe --path 
+          echo "**************"
+
+      - name: Dump Con file2
+        env:
+          VARS_JSON_LOCAL: ${{ toJSON(vars) }}
+        run: |
+          Get-ChildItem Env: | ForEach-Object { "$($_.Name)=$($_.Value)" } | Out-File -FilePath env_variables.txt
+          echo "**********"
+          Get-Content env_variables.txt
+          echo "*****************************************"
+          type env_variables.txt

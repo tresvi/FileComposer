@@ -1,4 +1,6 @@
-﻿
+﻿using FileComposer.InputProviders;
+using FileComposer.OutputProviders;
+
 namespace FileComposer
 {
     internal class Program
@@ -9,7 +11,11 @@ namespace FileComposer
             try
             {
                 IUtils utils = new Utils();
-                FileComposerManager fileComposer = new FileComposerManager(utils);
+                //IInputProvider consoleInputProvider = new ConsoleInputProvider();
+                IInputProvider consoleInputProvider = new FileInputProvider(@"..\..\..\TestFiles\ValueFiles\SimpleList2.txt");
+                IOutputProvider consoleOutputProvider = new ConsoleOutputProvider();
+
+                FileComposerManager fileComposer = new FileComposerManager(utils, consoleInputProvider, consoleOutputProvider);
                 fileComposer.Execute(args);
                 return 0;
             }

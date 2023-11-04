@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "FileComposer": {
+      "commandName": "Project",
+      "commandLineArgs": "--path ..\\..\\..\\TestFiles\\TemplateFiles\\json1.json -s -j -w --filterPreffix \"CONFIG_\""
+    }
+  }
+}

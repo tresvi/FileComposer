@@ -1,20 +1,26 @@
-﻿//Agregar --ignoreWrongLines  --Filter   --w (sobreescribir file, si no, devolver el texto por stdout)
-// --separator(por default ':')    --failIf0Replace   --silent (no devuelve nada por consola)
-//FileComposer
-
+﻿
+/*
+    --path..\..\..\TestFiles\TemplateFiles\json1.json -s -j -w -t
+    
+*/
 using CommandLine;
+using FileComposer.InputProviders;
+using FileComposer.OutputProviders;
 using System.Text;
 
 namespace FileComposer
 {
     internal class FileComposerManager
     {
-
         private readonly IUtils _utils;
+        private readonly IInputProvider _inputProvider;
+        private readonly IOutputProvider _outputProvider;
 
-        public FileComposerManager(IUtils utils)
+        public FileComposerManager(IUtils utils, IInputProvider inputProvider, IOutputProvider outputprovider)
         {
             _utils = utils;
+            _inputProvider = inputProvider;
+            _outputProvider = outputprovider;
         }
 
         public void Execute(string[] args)
@@ -33,16 +39,25 @@ namespace FileComposer
                 string fileContent = File.ReadAllText(options.Path);
                 string inputLine;
 
-                while ((inputLine = Console.ReadLine()) != null)
+                while ((inputLine = _inputProvider.ReadLine()) != null)
                 {
                     if (string.IsNullOrWhiteSpace(inputLine)) continue;
 
-                    string key, value;
-                    (key, value) = GetKeyValuePairs(inputLine, options.Separator);
+                    (string key, string value) = GetKeyValuePairs(inputLine, options.Separator);
+                    key = key.Trim();
 
+                    if (options.JSonCompatible)
+                    {
+                        options.SkipInvalidLines = true;
+                        key = key.Trim().Trim('"');
+                        value = value.Trim().TrimEnd(',').Trim('"');
+                    }
+                    
                     if (string.IsNullOrWhiteSpace(key))
                     {
-                        if (!options.SkipInvalidLines)
+                        if (options.SkipInvalidLines)
+                            continue;
+                        else
                             throw new Exception($"The line '{inputLine}' does not have the right format. The key is null");
                     }
 
@@ -65,7 +80,7 @@ namespace FileComposer
 
                 if (!options.Silent)
                 {
-                    Console.WriteLine(fileContent);
+                    _outputProvider.WriteLine(fileContent);
                 }
             }
             catch (Exception)
@@ -79,7 +94,7 @@ namespace FileComposer
         {
             try
             {
-                int separatorPosition = separator.IndexOf(separator);
+                int separatorPosition = keyValuePair.IndexOf(separator);
 
                 if (separatorPosition == -1) return ("","");
 
