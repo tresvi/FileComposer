@@ -222,7 +222,27 @@ namespace Test_FileComposer.UnitTests
             Assert.That(result, Is.EqualTo(expectedResult));
         }
 
+        [Test]
+        [TestCase(new string[] { "--path", @".\..\..\..\NOT_EXISTS_DIR\Anything\asasass.json", "--ignoreCase", "--filterPreffix", "CONFIG_", "--jsonCompatible", "--filterSuffix", "1" }
+            , @".\..\..\..\TestFiles\ValueFiles\json1ToSuffixFilterTest.json")]
+        public void Fill_WithoutPath_ThrowsExeption(string[] args, string valuesFilePath)
+        {
+            for (int i = 0; i < args.Count(); i++)
+                args[i] = args[i].Trim();
 
+            string resultFilePath = Guid.NewGuid().ToString() + ".json";
+            IUtils utils = new Utils();
+            IInputProvider fileInputProvider = new FileInputProvider(valuesFilePath);
+            IOutputProvider fileOutputProvider = new FileOutputProvider(resultFilePath);
+
+            FileComposerManager fileComposer = new FileComposerManager(utils, fileInputProvider, fileOutputProvider);
+            Exception exceptionDetalle = Assert.Throws<Exception>(() => fileComposer.Execute(args));
+
+            ((FileOutputProvider)fileOutputProvider).Dispose();
+            if (File.Exists(resultFilePath)) File.Delete(resultFilePath);
+
+            Assert.That(exceptionDetalle.Message, Does.Contain("The file especified in 'Path' parameter can not be found").IgnoreCase);
+        }
         //Test excepcion cuando se omite Path
         //Test excepcion cuando se da un Path invalido
     }

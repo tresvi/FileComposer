@@ -32,10 +32,6 @@ namespace FileComposer
                 .WithParsed(o => { })
                 .WithNotParsed(HandleParseError).Value;
                 
-
-            if (string.IsNullOrWhiteSpace(options.Path))
-                throw new Exception("The 'Path' parameter can not be null");
-
             if (!File.Exists(options.Path))
                 throw new Exception($"The file especified in 'Path' parameter can not be found: {options.Path}");
 
