@@ -1,4 +1,6 @@
-ConnectionString: Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;
-LOG_DIR: C:\Logs\HCSMonitor
+ConnectionString: "Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;"
+LOG_DIR: "C:\Logs\HCSMonitor"
 LOG_ENABLE: True
 KEY_NOT_USED: False
+KEY_WITH_SPACES: "   spaced value "
+"KEY_WITH_DQUOTES":       inter  spaced  value      

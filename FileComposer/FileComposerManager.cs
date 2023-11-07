@@ -50,13 +50,17 @@ namespace FileComposer
                     if (inputLine.Trim().StartsWith(COMMENT_PREFFIX)) continue;
 
                     (string key, string value) = GetKeyValuePairs(inputLine, DEFAULT_KEY_VALUE_SEPARATOR);
-                    key = key.Trim();
+                    key = key.Trim().Trim('"');
 
                     if (options.JSonCompatible)
                     {
                         options.SkipInvalidLines = true;
-                        key = key.Trim().Trim('"');
                         value = value.Trim().TrimEnd(',').Trim('"');
+                    }
+                    else
+                    {
+                        value = value.Trim();
+                        if (value.StartsWith('"') && value.EndsWith('"')) value = value.Trim('"');
                     }
                     
                     if (string.IsNullOrWhiteSpace(key))
