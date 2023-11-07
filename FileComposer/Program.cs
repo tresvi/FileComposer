@@ -11,8 +11,7 @@ namespace FileComposer
             try
             {
                 IUtils utils = new Utils();
-                //IInputProvider consoleInputProvider = new ConsoleInputProvider();
-                IInputProvider consoleInputProvider = new FileInputProvider(@"..\..\..\TestFiles\ValueFiles\SimpleList2.txt");
+                IInputProvider consoleInputProvider = new ConsoleInputProvider();
                 IOutputProvider consoleOutputProvider = new ConsoleOutputProvider();
 
                 FileComposerManager fileComposer = new FileComposerManager(utils, consoleInputProvider, consoleOutputProvider);
