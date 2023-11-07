@@ -1,5 +1,0 @@
-CONFIG_VAR1: config_var1_value
-CONFIG_VAR2: config_var2_value
-VAR1: var1_value
-VAR2: var2_value
-VAR3: Var3_value

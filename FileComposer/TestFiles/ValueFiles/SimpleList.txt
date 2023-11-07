@@ -1,9 +1,0 @@
-ConnectionString: Esto es una Connection String
-APPPOOL_NAME: HCSMonitor
-LogDir: C:\Logs\HCSMonitor
-APP_PATH: C:/IISAplic/HCSMonitor
-ANONYMOUS_AUTH: true
-WINDOWS_AUTH: false
-LOG_DIR: C:\Logs\HCSMonitor
-RECURSOS_DIR: Recursos
-TXFILENAME_PATH: Recursos/TU.xml

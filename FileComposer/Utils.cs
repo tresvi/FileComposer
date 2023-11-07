@@ -8,8 +8,8 @@ namespace FileComposer
         public Encoding GetFileEncoding(string filePath);
         public bool ReplaceVariable(ref string textToReplace, string key, string value, bool ignoreCase);
         public void SaveFile(string filePath, string content, Encoding encoding);
-        public bool HasThePreffix(string word, string preffix);
-        public bool HasTheSuffix(string word, string suffix);
+        public bool HasThePreffix(string word, string preffix, bool ignoreCase);
+        public bool HasTheSuffix(string word, string suffix, bool ignoreCase);
     }
 
 
@@ -54,7 +54,7 @@ namespace FileComposer
         {
             try
             {
-                using (var writer = new StreamWriter(filePath + "(1)", false, encoding))
+                using (var writer = new StreamWriter(filePath, false, encoding))
                 {
                     writer.Write(content);
                 }
@@ -65,16 +65,22 @@ namespace FileComposer
             }
         }
 
-        public bool HasThePreffix(string word, string preffix)
+
+        public bool HasThePreffix(string word, string preffix, bool ignoreCase)
         {
             if (string.IsNullOrWhiteSpace(preffix)) return true;
-            return word.StartsWith(preffix);
+
+            StringComparison comparisonType = ignoreCase ? StringComparison.OrdinalIgnoreCase: StringComparison.Ordinal;
+            return word.StartsWith(preffix, comparisonType);
         }
 
-        public bool HasTheSuffix(string word, string suffix)
+
+        public bool HasTheSuffix(string word, string suffix, bool ignoreCase)
         {
             if (string.IsNullOrWhiteSpace(suffix)) return true;
-            return word.EndsWith(suffix);
+
+            StringComparison comparisonType = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+            return word.EndsWith(suffix, comparisonType);
         }
 
     }

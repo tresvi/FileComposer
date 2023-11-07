@@ -4,7 +4,9 @@
   "var1": {
     "var1": "var1value",
     "var2": "var2value",
-    "Var3": "%VAR3%"
+    "Var3": "%var3%"
   },
-  "VAR2": "var2_value"
+  "VAR2": "var2_value",
+  "__var1": "%__VAR1%",
+  "__VAR1": "%__var1%"
 }

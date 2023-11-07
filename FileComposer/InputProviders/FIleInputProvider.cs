@@ -1,6 +1,6 @@
 ﻿namespace FileComposer.InputProviders
 {
-    internal class FileInputProvider : IInputProvider, IDisposable
+    public class FileInputProvider : IInputProvider, IDisposable
     {
         private readonly StreamReader _sr;
 

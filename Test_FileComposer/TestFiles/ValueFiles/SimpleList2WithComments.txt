@@ -1,0 +1,10 @@
+
+#This is a comment
+CONFIG_VAR1:config_var1_value
+CONFIG_VAR2:config_var2_value
+
+#This is another comment
+VAR1:var1_value
+var2:var2_value
+VAR3:Var3_value
+############################

@@ -1,0 +1,10 @@
+{
+  "ConfigVar1": "config_var1_value",
+  "ConfigVar2": "config_var2_value",
+  "var1": {
+    "var1": "var1value",
+    "var2": "var2value",
+    "Var3": "%var3%"
+  },
+  "VAR2": "var2_value"
+}

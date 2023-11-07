@@ -6,15 +6,18 @@
 using CommandLine;
 using FileComposer.InputProviders;
 using FileComposer.OutputProviders;
+using System.Diagnostics;
 using System.Text;
 
 namespace FileComposer
 {
-    internal class FileComposerManager
+    public class FileComposerManager
     {
         private readonly IUtils _utils;
         private readonly IInputProvider _inputProvider;
         private readonly IOutputProvider _outputProvider;
+        private const char COMMENT_PREFFIX = '#';
+        private const char DEFAULT_KEY_VALUE_SEPARATOR = ':';
 
         public FileComposerManager(IUtils utils, IInputProvider inputProvider, IOutputProvider outputprovider)
         {
@@ -26,7 +29,9 @@ namespace FileComposer
         public void Execute(string[] args)
         {
             Options options = Parser.Default.ParseArguments<Options>(args)
-                .WithParsed<Options>(o => { }).Value;
+                .WithParsed(o => { })
+                .WithNotParsed(HandleParseError).Value;
+                
 
             if (string.IsNullOrWhiteSpace(options.Path))
                 throw new Exception("The 'Path' parameter can not be null");
@@ -42,8 +47,9 @@ namespace FileComposer
                 while ((inputLine = _inputProvider.ReadLine()) != null)
                 {
                     if (string.IsNullOrWhiteSpace(inputLine)) continue;
+                    if (inputLine.Trim().StartsWith(COMMENT_PREFFIX)) continue;
 
-                    (string key, string value) = GetKeyValuePairs(inputLine, options.Separator);
+                    (string key, string value) = GetKeyValuePairs(inputLine, DEFAULT_KEY_VALUE_SEPARATOR);
                     key = key.Trim();
 
                     if (options.JSonCompatible)
@@ -61,14 +67,14 @@ namespace FileComposer
                             throw new Exception($"The line '{inputLine}' does not have the right format. The key is null");
                     }
 
-                    bool preffixPresent = _utils.HasThePreffix(key, options.FilterPreffix);
-                    bool suffixPresent = _utils.HasTheSuffix(key, options.FilterSuffix);
+                    bool preffixPresent = _utils.HasThePreffix(key, options.FilterPreffix, options.IgnoreCase);
+                    bool suffixPresent = _utils.HasTheSuffix(key, options.FilterSuffix, options.IgnoreCase);
 
                     if (!preffixPresent || !suffixPresent) continue;
 
-                    bool keyNotFound = _utils.ReplaceVariable(ref fileContent, key, value, options.IgnoreCase);
+                    bool keyWasReplaced = _utils.ReplaceVariable(ref fileContent, key, value, options.IgnoreCase);
 
-                    if (options.FailIf0Replace && keyNotFound)
+                    if (options.FailIf0Replace && !keyWasReplaced)
                         throw new Exception($"The key '{key}' was not foud in the destiny file");
                 }
 
@@ -90,7 +96,18 @@ namespace FileComposer
         }
 
 
-        public (string key, string value) GetKeyValuePairs(string keyValuePair, string separator)
+        static void HandleParseError(IEnumerable<Error> errs)
+        {
+            string errDescrption = "";
+            foreach (Error error in errs) 
+            {
+                errDescrption += error.ToString() + "|";
+            }
+
+            throw new Exception($"Error when parse arguments. Details: {errDescrption}");
+        }
+
+        public (string key, string value) GetKeyValuePairs(string keyValuePair, char separator)
         {
             try
             {

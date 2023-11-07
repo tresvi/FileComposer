@@ -1,14 +1,16 @@
 ﻿namespace FileComposer.OutputProviders
 {
-    internal class FileOutputProvider : IOutputProvider, IDisposable
+    public class FileOutputProvider : IOutputProvider, IDisposable
     {
-        private readonly StreamWriter _sw;
+        private readonly StreamWriter _streamWriter;
+        private readonly FileStream _fileStream;
 
         public FileOutputProvider(string path)
         {
             try
             {
-                _sw = new StreamWriter(path);
+                //_fileStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read);
+                _streamWriter = new StreamWriter(path);
             }
             catch (Exception ex)
             {
@@ -18,17 +20,18 @@
 
         public void WriteLine(string value)
         {
-            _sw.WriteLine(value);
+            _streamWriter.WriteLine(value);
         }
 
         public void Dispose()
         {
-            if (_sw == null) return;
-
             try
             {
-                _sw.Close();
-                _sw.Dispose();
+                if (_streamWriter != null)
+                {
+                    _streamWriter.Close();
+                    _streamWriter.Dispose();
+                }
             }
             catch { }
         }
