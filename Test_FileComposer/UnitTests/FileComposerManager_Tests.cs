@@ -243,7 +243,7 @@ namespace Test_FileComposer.UnitTests
 
             Assert.That(exceptionDetalle.Message, Does.Contain("The file especified in 'Path' parameter can not be found").IgnoreCase);
         }
-        //Test excepcion cuando se omite Path
-        //Test excepcion cuando se da un Path invalido
+
+
     }
 }
