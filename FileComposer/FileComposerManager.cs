@@ -50,6 +50,7 @@ namespace FileComposer
 
                     if (options.JSonCompatible)
                     {
+                        if (value.Trim() == "{") continue;
                         options.SkipInvalidLines = true;
                         value = value.Trim().TrimEnd(',').Trim('"');
                     }
