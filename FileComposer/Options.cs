@@ -17,7 +17,7 @@ namespace FileComposer
         [Option('F', "filterSuffix", Required = false, HelpText = "Only lines ending with the specified suffix will be considered")]
         public string FilterSuffix { get; set; }
 
-        [Option('e', "failIf0Replace", Required = false, HelpText = "Falla si no se encontro ninguna lcave para reemplazar")]
+        [Option('e', "failIf0Replace", Required = false, HelpText = "Fail if no label is found to replace")]
         public bool FailIf0Replace { get; set; }
 
         [Option('t', "silent", Required = false, HelpText = "If it's set, the result of the replace will not be returned by standar output")]
@@ -32,7 +32,8 @@ namespace FileComposer
         [Option('j', "jsonCompatible", Required = false, HelpText = "Especify the preffix at the start of a label in de file to compose")]
         public bool JSonCompatible { get; set; }
 
-
+        [Option('u', "failIfUnreplaced", Required = false, HelpText = "Fail if detects any unreplaced label. Useful to detect configuration values ​​that were forgotten to set in the environment")]
+        public bool failIfUnreplaced { get; set; }
         /*
         private const string DEFAULT_SEPARATOR = ":";
 

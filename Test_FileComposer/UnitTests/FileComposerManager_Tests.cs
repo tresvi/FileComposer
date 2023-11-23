@@ -63,12 +63,12 @@ namespace Test_FileComposer.UnitTests
             IOutputProvider fileOutputProvider = new FileOutputProvider(resultFilePath);
             FileComposerManager fileComposer = new FileComposerManager(utils, fileInputProvider, fileOutputProvider);
 
-            Exception exceptionDetalle = Assert.Throws<Exception>(() => fileComposer.Execute(args));
+            Exception exception = Assert.Throws<Exception>(() => fileComposer.Execute(args));
             
             ((FileOutputProvider)fileOutputProvider).Dispose();
             if (File.Exists(resultFilePath)) File.Delete(resultFilePath);
 
-            Assert.That(exceptionDetalle.Message, Does.Contain("was not foud in the destiny file").IgnoreCase);
+            Assert.That(exception.Message, Does.Contain("was not foud in the destiny file").IgnoreCase);
         }
 
 
@@ -236,14 +236,36 @@ namespace Test_FileComposer.UnitTests
             IOutputProvider fileOutputProvider = new FileOutputProvider(resultFilePath);
 
             FileComposerManager fileComposer = new FileComposerManager(utils, fileInputProvider, fileOutputProvider);
-            Exception exceptionDetalle = Assert.Throws<Exception>(() => fileComposer.Execute(args));
+            Exception exception = Assert.Throws<Exception>(() => fileComposer.Execute(args));
 
             ((FileOutputProvider)fileOutputProvider).Dispose();
             if (File.Exists(resultFilePath)) File.Delete(resultFilePath);
 
-            Assert.That(exceptionDetalle.Message, Does.Contain("The file especified in 'Path' parameter can not be found").IgnoreCase);
+            Assert.That(exception.Message, Does.Contain("The file especified in 'Path' parameter can not be found").IgnoreCase);
         }
 
+        [Test]
+        [TestCase(new string[] { "--path", @".\..\..\..\TestFiles\TemplateFiles\json1.json", "--ignoreCase", "--jsonCompatible", "--failIfUnreplaced" }
+            , @".\..\..\..\TestFiles\ValueFiles\json1_Incomplete.json", "Unreplaced variables was found, key:var3 (line 7)")]
+        [TestCase(new string[] { "--path", @".\..\..\..\TestFiles\TemplateFiles\json1.json", "--i", "--j", "-u" }
+            , @".\..\..\..\TestFiles\ValueFiles\json1_Incomplete.json", "Unreplaced variables was found, key:var3 (line 7)")]
+        [TestCase(new string[] { "--path", @".\..\..\..\TestFiles\TemplateFiles\json1.json", "--ignoreCase", "--jsonCompatible", "--failIfUnreplaced" }
+            , @".\..\..\..\TestFiles\ValueFiles\json1_Incomplete2.json", "Unreplaced variables was found, key:CONFIG_VAR2 (line 3), key:var3 (line 7)")]
+        [TestCase(new string[] { "--path", @".\..\..\..\TestFiles\TemplateFiles\json1.json", "--ignoreCase", "--jsonCompatible", "--failIfUnreplaced" }
+            , @".\..\..\..\TestFiles\ValueFiles\TotallyEmpty.json", "Unreplaced variables was found, key:CONFIG_VAR1 (line 2), key:CONFIG_VAR2 (line 3), key:var3 (line 7)")]
+        public void Fill_WithJSonIncomplete_ThrowsException(string[] args, string valuesFilePath, string expectedResult)
+        {
+            for (int i = 0; i < args.Count(); i++)
+                args[i] = args[i].Trim();
 
+            IUtils utils = new Utils();
+            IInputProvider fileInputProvider = new FileInputProvider(valuesFilePath);
+            IOutputProvider consoleOutputProvider = new ConsoleOutputProvider();
+
+            FileComposerManager fileComposer = new FileComposerManager(utils, fileInputProvider, consoleOutputProvider);
+            Exception exception = Assert.Throws<Exception>(() => fileComposer.Execute(args));
+
+            Assert.That(exception.Message, Is.EqualTo(expectedResult));
+        }
     }
 }

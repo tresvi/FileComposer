@@ -1,13 +1,11 @@
-﻿
-/*
-    --path..\..\..\TestFiles\TemplateFiles\json1.json -s -j -w -t
-    
+﻿/*
+    --path..\..\..\TestFiles\TemplateFiles\json1.json -s -j -w -t    
 */
 using CommandLine;
 using FileComposer.InputProviders;
 using FileComposer.OutputProviders;
-using System.Diagnostics;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace FileComposer
 {
@@ -37,7 +35,7 @@ namespace FileComposer
 
             try
             { 
-                string fileContent = File.ReadAllText(options.Path);
+                string configFileContent = File.ReadAllText(options.Path);
                 string inputLine;
 
                 while ((inputLine = _inputProvider.ReadLine()) != null)
@@ -73,21 +71,25 @@ namespace FileComposer
 
                     if (!preffixPresent || !suffixPresent) continue;
 
-                    bool keyWasReplaced = _utils.ReplaceVariable(ref fileContent, key, value, options.IgnoreCase);
+                    bool keyWasReplaced = _utils.ReplaceVariable(ref configFileContent, key, value, options.IgnoreCase);
 
                     if (options.FailIf0Replace && !keyWasReplaced)
                         throw new Exception($"The key '{key}' was not foud in the destiny file");
                 }
 
+                if (options.failIfUnreplaced)
+                    CheckUnreplacedTags(configFileContent);
+                    
+
                 if (options.WriteFile)
                 { 
                     Encoding encoding = _utils.GetFileEncoding(options.Path);
-                    _utils.SaveFile(options.Path, fileContent, encoding);
+                    _utils.SaveFile(options.Path, configFileContent, encoding);
                 }
 
                 if (!options.Silent)
                 {
-                    _outputProvider.WriteLine(fileContent);
+                    _outputProvider.WriteLine(configFileContent);
                 }
             }
             catch (Exception)
@@ -125,6 +127,33 @@ namespace FileComposer
             {
                 throw;
             }
+        }
+
+
+        public void CheckUnreplacedTags(string fileContent)
+        {
+            Regex regex = new Regex(@"%([^%]+)%");
+            string varsNotReplced = "";
+
+            using (StringReader reader = new StringReader(fileContent))
+            {
+                string line;                
+                int lineNumber = 1;
+
+                while ((line = reader.ReadLine()) != null)
+                {
+                    MatchCollection matches = regex.Matches(line);
+
+                    foreach (Match match in matches)
+                    {
+                        varsNotReplced += $", key:{match.Groups[1].Value} (line {lineNumber})";
+                    }
+                    lineNumber++;
+                }
+            }
+
+            if (varsNotReplced != "")
+                throw new Exception($"Unreplaced variables was found{varsNotReplced}");
         }
 
     }

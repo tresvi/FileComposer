@@ -1,3 +1,10 @@
+#Original de ConfigFiller
+#      - name: Completando archivo de config. con configuracion del ambiente
+#        run: >
+#          C:\actions-runner\ConfigFiller\ConfigFiller.exe --path "${{ env.APP_PATH }}/appSettings.json" --fail0Replace 
+#          "SERILOG_WRITETO_ARGS_PATH=${{ vars.SERILOG_WRITETO_ARGS_PATH }}"  
+
+
       - name: ENV Local
         env:
           VARS_JSON_LOCAL: ${{ toJSON(vars) }}
